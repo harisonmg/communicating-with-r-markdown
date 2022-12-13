@@ -40,3 +40,9 @@ vignettes/*.pdf
 
 # data
 input
+
+# R markdown output
+*.html
+*.pdf
+*.docx
+*.pptx
