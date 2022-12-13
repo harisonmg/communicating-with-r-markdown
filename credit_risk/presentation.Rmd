@@ -9,6 +9,7 @@ output: ioslides_presentation
 library(dplyr)
 library(forcats)
 library(ggplot2)
+library(ggrepel)
 library(ggthemes)
 library(knitr)
 library(readr)
@@ -30,6 +31,11 @@ knitr::opts_chunk$set(echo = FALSE)
 df <- read_csv(TRAIN_DATA)
 ```
 
+```{r update-target-column}
+df$loan_status[df$loan_status == 0] <- "Non Default"
+df$loan_status[df$loan_status == 1] <-  "Default"
+```
+
 ```{r update-data-types, include=FALSE}
 df <- df %>%
   mutate(
@@ -37,29 +43,27 @@ df <- df %>%
   )
 ```
 
-
-## Distribution of variables
 ## Loan status(target column)
-```{r loan-status}
+```{r loan-status, warning=FALSE}
 ggplot(data = df, mapping = aes(x = loan_status, fill = loan_status)) +
   geom_bar(mapping = aes(y = (..count..)/sum(..count..))) +
   scale_y_continuous(labels = scales::percent) +
-  labs(title = "Distribution of loan status", y = "Frequency") +
-  theme_economist()
+  labs(title = "Distribution of loan status", y = "Frequency", x = "Loan status") +
+  theme_economist() 
 ```
 
 ## Interest rate
-```{r loan-interest-rate}
+```{r loan-interest-rate, warning=FALSE, message=FALSE}
 ggplot(data = df, mapping = aes(x = loan_int_rate, fill = loan_status)) +
-  geom_histogram() +
+  geom_histogram(alpha = 0.2, position = "identity", mapping = aes(color = loan_status), bins = 50) +
   labs(title = "Distribution of loan interest rate by loan status") +
   theme_economist()
 ```
 
 ## Loan-income ratio
 ```{r loan-income-ratio}
-ggplot(data = df, mapping = aes(x = loan_percent_income, fill = loan_status, alpha = 0.5)) +
-  geom_density() +
+ggplot(data = df, mapping = aes(x = loan_percent_income, fill = loan_status)) +
+  geom_density(alpha = 0.5) +
   labs(title = "Distribution of loan-income ratio by loan status") +
   theme_economist()
 ```
