@@ -1,0 +1,83 @@
+---
+title: "Credit Default Risk Insights"
+author: "Harison Gachuru"
+date: "`r Sys.Date()`"
+output: ioslides_presentation
+---
+
+```{r load-libraries, include=FALSE}
+library(dplyr)
+library(forcats)
+library(ggplot2)
+library(ggthemes)
+library(knitr)
+library(readr)
+```
+
+
+```{r config, include=FALSE}
+# file paths
+DATA_DIR <- file.path("../input/credit-risk")
+TRAIN_DATA <- file.path(DATA_DIR, "train.csv")
+
+# theme
+
+# global options
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{r load-data, message=FALSE}
+df <- read_csv(TRAIN_DATA)
+```
+
+```{r update-data-types, include=FALSE}
+df <- df %>%
+  mutate(
+    loan_status = as_factor(loan_status)
+  )
+```
+
+
+## Distribution of variables
+## Loan status(target column)
+```{r loan-status}
+ggplot(data = df, mapping = aes(x = loan_status, fill = loan_status)) +
+  geom_bar(mapping = aes(y = (..count..)/sum(..count..))) +
+  scale_y_continuous(labels = scales::percent) +
+  labs(title = "Distribution of loan status", y = "Frequency") +
+  theme_economist()
+```
+
+## Interest rate
+```{r loan-interest-rate}
+ggplot(data = df, mapping = aes(x = loan_int_rate, fill = loan_status)) +
+  geom_histogram() +
+  labs(title = "Distribution of loan interest rate by loan status") +
+  theme_economist()
+```
+
+## Loan-income ratio
+```{r loan-income-ratio}
+ggplot(data = df, mapping = aes(x = loan_percent_income, fill = loan_status, alpha = 0.5)) +
+  geom_density() +
+  labs(title = "Distribution of loan-income ratio by loan status") +
+  theme_economist()
+```
+
+## Loan grade
+```{r loan-grade}
+ggplot(data = df, mapping = aes(x = loan_grade, fill = loan_status)) +
+  geom_bar(position = "dodge") +
+  labs(title = "Distribution of loan grade by loan status") +
+  theme_economist()
+```
+
+## Home ownership
+```{r home-ownership}
+ggplot(data = df, mapping = aes(x = person_home_ownership, fill = loan_status)) +
+  geom_bar(mapping = aes(y = (..count..)/sum(..count..)), position = "dodge") +
+  scale_y_continuous(labels = scales::percent) +
+  labs(title = "Distribution of home ownership by loan status", y = "Frequency") +
+  theme_economist()
+```
+
