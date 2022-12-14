@@ -115,3 +115,6 @@ df %>%
   ) +
   theme_economist()
 ```
+
+## The end
+![Thank you for listening](../assets/thanks-4-listening.jpg)
