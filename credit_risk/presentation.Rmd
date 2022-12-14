@@ -40,7 +40,7 @@ df <- df %>%
 ```
 
 ## Loan status
-```{r loan-status}
+```{r loan-status, warning=FALSE}
 ggplot(data = df, mapping = aes(x = loan_status, fill = loan_status)) +
   geom_bar(mapping = aes(y = after_stat(count)/sum(after_stat(count)))) +
   scale_y_continuous(labels = scales::percent) +
@@ -49,7 +49,8 @@ ggplot(data = df, mapping = aes(x = loan_status, fill = loan_status)) +
     x = "Loan status",
     y = "Frequency"
   ) +
-  theme_economist()
+  theme_economist() +
+  guides(fill = FALSE) 
 ```
 
 ## Interest rate
@@ -80,24 +81,33 @@ ggplot(data = df, mapping = aes(x = loan_percent_income, fill = loan_status)) +
 ```
 
 ## Loan grade
-```{r loan-grade}
-ggplot(data = df, mapping = aes(x = loan_grade, fill = loan_status)) +
-  geom_bar(position = "dodge") +
-  labs(
-    title = "Distribution of loan grade by loan status",
-    x = "Loan grade"
-  ) +
-  theme_economist()
+```{r loan-grade, message=FALSE}
+df %>% 
+  group_by(loan_grade, loan_status) %>% 
+  summarize(n = n()) %>%
+  ggplot(mapping = aes(x = loan_grade, y = n, fill = loan_status)) +
+    geom_col(position = "dodge") +
+    labs(
+      title = "Distribution of loan grade by loan status",
+      x = "Loan grade"
+    ) +
+    theme_economist() +
+    geom_label_repel(aes(label = n)) + ylab("Frequency")
 ```
 
 ## Home ownership
-```{r home-ownership}
-ggplot(data = df, mapping = aes(x = person_home_ownership, fill = loan_status)) +
-  geom_bar(
-    mapping = aes(y = (after_stat(count))/sum(after_stat(count))),
-    position = "dodge"
-  ) +
-  scale_y_continuous(labels = scales::percent) +
+```{r home-ownership, message=FALSE}
+df %>% 
+  group_by(loan_status, person_home_ownership ) %>%
+  summarise(n = n()) %>%
+  ggplot(
+    mapping = aes(
+      x = reorder(person_home_ownership, -n),
+      y = n,
+      fill = loan_status )
+    ) +
+  geom_col(position = 'dodge') +
+  geom_label_repel(aes(label = n)) +
   labs(
     title = "Distribution of home ownership by loan status",
     x = "Home ownership",
