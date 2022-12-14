@@ -1,0 +1,36 @@
+---
+title: "markdown_basics"
+author: "Harison Gachuru"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+# Heading 1
+## Heading 2
+### Heading 3
+#### Heading 4
+##### Heading 5
+###### Heading 6
+
+# Lists
+## Ordered
+1. Item 1
+1. Item 2
+1. Item 3
+1. Item 4
+1. Item 5
+
+## Unordered
+- Item 1
+- Item 2
+  - Item 2.1
+  - Item 2.2
+
+## Font
+This is an **important** point that needs some *emphasis*.
+
+This is another _quite interesting_ point that needs __more attention__.
+
+## Links and images
+Please visit [the homepage](https://icealion.co.ke/) our website for more information.
+Thanks for listening. ![Any questions or comments?](assets/questions.jpg)
