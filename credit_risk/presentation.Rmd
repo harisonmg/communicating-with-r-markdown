@@ -1,6 +1,6 @@
 ---
 title: "Credit Default Risk Insights"
-author:  "Harison Gachuru & Sofia Elmi"
+author: "Harison Gachuru & Sofia Elmi"
 date: "`r Sys.Date()`"
 output: ioslides_presentation
 ---
