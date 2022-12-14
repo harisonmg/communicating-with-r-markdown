@@ -10,7 +10,7 @@ knitr::opts_chunk$set(echo = FALSE)
 ```
 
 ## Key components
--  YAML header
+- YAML header
 - Code chunks
 - Text
 
@@ -19,4 +19,4 @@ knitr::opts_chunk$set(echo = FALSE)
 - R markdown output formats
 - Creating publication quality plots
 - Case study: credit default risk dataset
-- Excercise: Ames housing dataset
+- Exercise: Ames housing dataset
