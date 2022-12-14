@@ -2,7 +2,7 @@
 title: "Credit Default Risk Insights"
 author: "Harison Gachuru & Sofia Elmi"
 date: "`r Sys.Date()`"
-output: pdf_document
+output: html_document
 ---
 
 ```{r load-libraries, include=FALSE}
@@ -38,6 +38,15 @@ df <- df %>%
     loan_status = fct_recode(loan_status, "Non Default" = "0", "Default" = "1")
   )
 ```
+
+## Preview data
+```{r preview-data}
+df %>%
+  select(loan_status, loan_grade, loan_percent_income, loan_int_rate) %>%
+  head() %>%
+  kable()
+```
+
 
 ## Loan status
 ```{r loan-status, warning=FALSE}
