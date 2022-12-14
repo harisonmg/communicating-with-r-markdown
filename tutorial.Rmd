@@ -1,0 +1,22 @@
+---
+title: "Communicating results with R markdown"
+author: "Harison Gachuru"
+date: "`r Sys.Date()`"
+output: powerpoint_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Key components
+-  YAML header
+- Code chunks
+- Text
+
+## What we'll cover
+- Basic markdown
+- R markdown output formats
+- Creating publication quality plots
+- Case study: credit default risk dataset
+- Excercise: Ames housing dataset
