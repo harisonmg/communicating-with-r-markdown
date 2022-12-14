@@ -1,6 +1,6 @@
 ---
 title: "Credit Default Risk Insights"
-author: "Harison Gachuru"
+author:  "Harison Gachuru & Sofia Elmi"
 date: "`r Sys.Date()`"
 output: ioslides_presentation
 ---
@@ -21,42 +21,50 @@ library(readr)
 DATA_DIR <- file.path("../input/credit-risk")
 TRAIN_DATA <- file.path(DATA_DIR, "train.csv")
 
-# theme
-
 # global options
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
 ```{r load-data, message=FALSE}
-df <- read_csv(TRAIN_DATA)
+col_types <- cols(
+  loan_status = col_factor()
+)
+df <- read_csv(TRAIN_DATA, col_types = col_types)
 ```
 
-```{r update-target-column}
-df$loan_status[df$loan_status == 0] <- "Non Default"
-df$loan_status[df$loan_status == 1] <-  "Default"
-```
-
-```{r update-data-types, include=FALSE}
+```{r update-columns}
 df <- df %>%
   mutate(
-    loan_status = as_factor(loan_status)
+    loan_status = fct_recode(loan_status, "Non Default" = "0", "Default" = "1")
   )
 ```
 
-## Loan status(target column)
-```{r loan-status, warning=FALSE}
+## Loan status
+```{r loan-status}
 ggplot(data = df, mapping = aes(x = loan_status, fill = loan_status)) +
-  geom_bar(mapping = aes(y = (..count..)/sum(..count..))) +
+  geom_bar(mapping = aes(y = after_stat(count)/sum(after_stat(count)))) +
   scale_y_continuous(labels = scales::percent) +
-  labs(title = "Distribution of loan status", y = "Frequency", x = "Loan status") +
-  theme_economist() 
+  labs(
+    title = "Distribution of loan status",
+    x = "Loan status",
+    y = "Frequency"
+  ) +
+  theme_economist()
 ```
 
 ## Interest rate
-```{r loan-interest-rate, warning=FALSE, message=FALSE}
+```{r loan-interest-rate, warning=FALSE}
 ggplot(data = df, mapping = aes(x = loan_int_rate, fill = loan_status)) +
-  geom_histogram(alpha = 0.2, position = "identity", mapping = aes(color = loan_status), bins = 50) +
-  labs(title = "Distribution of loan interest rate by loan status") +
+  geom_histogram(
+    alpha = 0.2,
+    position = "identity",
+    mapping = aes(color = loan_status),
+    bins = 50
+  ) +
+  labs(
+    title = "Distribution of loan interest rate by loan status",
+    x = "Interest rate"
+  ) +
   theme_economist()
 ```
 
@@ -64,7 +72,10 @@ ggplot(data = df, mapping = aes(x = loan_int_rate, fill = loan_status)) +
 ```{r loan-income-ratio}
 ggplot(data = df, mapping = aes(x = loan_percent_income, fill = loan_status)) +
   geom_density(alpha = 0.5) +
-  labs(title = "Distribution of loan-income ratio by loan status") +
+  labs(
+    title = "Distribution of loan-income ratio by loan status",
+    x = "Loan-income ratio"
+  ) +
   theme_economist()
 ```
 
@@ -72,16 +83,25 @@ ggplot(data = df, mapping = aes(x = loan_percent_income, fill = loan_status)) +
 ```{r loan-grade}
 ggplot(data = df, mapping = aes(x = loan_grade, fill = loan_status)) +
   geom_bar(position = "dodge") +
-  labs(title = "Distribution of loan grade by loan status") +
+  labs(
+    title = "Distribution of loan grade by loan status",
+    x = "Loan grade"
+  ) +
   theme_economist()
 ```
 
 ## Home ownership
 ```{r home-ownership}
 ggplot(data = df, mapping = aes(x = person_home_ownership, fill = loan_status)) +
-  geom_bar(mapping = aes(y = (..count..)/sum(..count..)), position = "dodge") +
+  geom_bar(
+    mapping = aes(y = (after_stat(count))/sum(after_stat(count))),
+    position = "dodge"
+  ) +
   scale_y_continuous(labels = scales::percent) +
-  labs(title = "Distribution of home ownership by loan status", y = "Frequency") +
+  labs(
+    title = "Distribution of home ownership by loan status",
+    x = "Home ownership",
+    y = "Frequency"
+  ) +
   theme_economist()
 ```
-
