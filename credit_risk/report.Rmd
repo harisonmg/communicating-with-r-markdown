@@ -1,14 +1,15 @@
 ---
 title: "Credit Default Risk Insights"
-author: "Harison Gachuru"
+author: "Harison Gachuru & Sofia Elmi"
 date: "`r Sys.Date()`"
-output: html_document
+output: pdf_document
 ---
 
 ```{r load-libraries, include=FALSE}
 library(dplyr)
 library(forcats)
 library(ggplot2)
+library(ggrepel)
 library(ggthemes)
 library(knitr)
 library(readr)
@@ -20,63 +21,97 @@ library(readr)
 DATA_DIR <- file.path("../input/credit-risk")
 TRAIN_DATA <- file.path(DATA_DIR, "train.csv")
 
-# theme
-
 # global options
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
 ```{r load-data, message=FALSE}
-df <- read_csv(TRAIN_DATA)
+col_types <- cols(
+  loan_status = col_factor()
+)
+df <- read_csv(TRAIN_DATA, col_types = col_types)
 ```
 
-```{r update-data-types, include=FALSE}
+```{r update-columns}
 df <- df %>%
   mutate(
-    loan_status = as_factor(loan_status)
+    loan_status = fct_recode(loan_status, "Non Default" = "0", "Default" = "1")
   )
 ```
 
-
-## Distribution of variables
-### Loan status(target column)
-```{r loan-status}
+## Loan status
+```{r loan-status, warning=FALSE}
 ggplot(data = df, mapping = aes(x = loan_status, fill = loan_status)) +
-  geom_bar(mapping = aes(y = (..count..)/sum(..count..))) +
+  geom_bar(mapping = aes(y = after_stat(count)/sum(after_stat(count)))) +
   scale_y_continuous(labels = scales::percent) +
-  labs(title = "Distribution of loan status", y = "Frequency") +
-  theme_economist()
+  labs(
+    title = "Distribution of loan status",
+    x = "Loan status",
+    y = "Frequency"
+  ) +
+  theme_economist() +
+  guides(fill = FALSE) 
 ```
 
-### Interest rate
-```{r loan-interest-rate}
+## Interest rate
+```{r loan-interest-rate, warning=FALSE}
 ggplot(data = df, mapping = aes(x = loan_int_rate, fill = loan_status)) +
-  geom_histogram() +
-  labs(title = "Distribution of loan interest rate by loan status") +
+  geom_histogram(
+    alpha = 0.2,
+    position = "identity",
+    mapping = aes(color = loan_status),
+    bins = 50
+  ) +
+  labs(
+    title = "Distribution of loan interest rate by loan status",
+    x = "Interest rate"
+  ) +
   theme_economist()
 ```
 
-### Loan-income ratio
+## Loan-income ratio
 ```{r loan-income-ratio}
-ggplot(data = df, mapping = aes(x = loan_percent_income, fill = loan_status, alpha = 0.5)) +
-  geom_density() +
-  labs(title = "Distribution of loan-income ratio by loan status") +
+ggplot(data = df, mapping = aes(x = loan_percent_income, fill = loan_status)) +
+  geom_density(alpha = 0.5) +
+  labs(
+    title = "Distribution of loan-income ratio by loan status",
+    x = "Loan-income ratio"
+  ) +
   theme_economist()
 ```
 
-### Loan grade
-```{r loan-grade}
-ggplot(data = df, mapping = aes(x = loan_grade, fill = loan_status)) +
-  geom_bar(position = "dodge") +
-  labs(title = "Distribution of loan grade by loan status") +
-  theme_economist()
+## Loan grade
+```{r loan-grade, message=FALSE}
+df %>% 
+  group_by(loan_grade, loan_status) %>% 
+  summarize(n = n()) %>%
+  ggplot(mapping = aes(x = loan_grade, y = n, fill = loan_status)) +
+    geom_col(position = "dodge") +
+    labs(
+      title = "Distribution of loan grade by loan status",
+      x = "Loan grade"
+    ) +
+    theme_economist() +
+    geom_label_repel(aes(label = n)) + ylab("Frequency")
 ```
 
-### Home ownership
-```{r home-ownership}
-ggplot(data = df, mapping = aes(x = person_home_ownership, fill = loan_status)) +
-  geom_bar(mapping = aes(y = (..count..)/sum(..count..)), position = "dodge") +
-  scale_y_continuous(labels = scales::percent) +
-  labs(title = "Distribution of home ownership by loan status", y = "Frequency") +
+## Home ownership
+```{r home-ownership, message=FALSE}
+df %>% 
+  group_by(loan_status, person_home_ownership ) %>%
+  summarise(n = n()) %>%
+  ggplot(
+    mapping = aes(
+      x = reorder(person_home_ownership, -n),
+      y = n,
+      fill = loan_status )
+    ) +
+  geom_col(position = 'dodge') +
+  geom_label_repel(aes(label = n)) +
+  labs(
+    title = "Distribution of home ownership by loan status",
+    x = "Home ownership",
+    y = "Frequency"
+  ) +
   theme_economist()
 ```
